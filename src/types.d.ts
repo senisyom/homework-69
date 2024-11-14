@@ -1,9 +1,13 @@
 export interface IChannel {
-  title: string;
-  status: boolean;
-  id?: string;
+  id: number;
+  name: string;
 }
 
 export interface IChannelApi {
-  [id: string]: IChannel;
+  id: number;
+  name: string;
+  summary: string;
+  image: {
+    medium: string;
+  };
 }

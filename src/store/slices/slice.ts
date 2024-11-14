@@ -1,35 +1,49 @@
-import { PayloadAction } from "@reduxjs/toolkit";
-import { fetchAllChannels } from "../thunks/thunk";
-import { IChannel } from "../../types";
+import { createSlice } from "@reduxjs/toolkit";
+import { fetchTvShows, fetchLoading } from "../thunks/thunk";
+import { IChannel, IChannelApi } from "../../types";
+import { RootState } from "../../app/store";
 
-interface ChannelsState {
-  chanel: IChannel[];
-  isFetchLoading: boolean;
+export interface SearchTvShowState {
+  shows: IChannel[];
+  showDisplay: IChannelApi | null;
+  fetchLoading: boolean;
 }
 
-const initialState: ChannelsState = {
-  chanel: [],
-  isFetchLoading: false,
+const initialState: SearchTvShowState = {
+  shows: [],
+  showDisplay: null,
+  fetchLoading: false,
 };
 
-export const channelSlice = createSlice({
-  name: "channel",
+export const tvShowSlice = createSlice({
+  name: "TvShows",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAllChannels.pending, (state) => {
-        state.isFetchLoading = true;
+      .addCase(fetchTvShows.pending, (state) => {
+        state.fetchLoading = true;
       })
-      .addCase(fetchAllChannels.fulfilled, (state, actions: PayloadAction<IChannel[]>) => {
-        state.chanels = actions.payload;
-        state.isFetchLoading = false;
+      .addCase(fetchTvShows.fulfilled, (state, { payload: shows }) => {
+        state.fetchLoading = false;
+        state.shows = shows;
       })
-      .addCase(fetchAllChannels.rejected, (state) => {
-        state.isFetchLoading = false;
+      .addCase(fetchTvShows.rejected, (state) => {
+        state.fetchLoading = false;
+      })
+      .addCase(fetchLoading.pending, (state) => {
+        state.fetchLoading = true;
+      })
+      .addCase(fetchLoading.fulfilled, (state, { payload: showDisplay }) => {
+        state.fetchLoading = false;
+        state.showDisplay = showDisplay;
+      })
+      .addCase(fetchLoading.rejected, (state) => {
+        state.fetchLoading = false;
       });
   },
 });
 
-export const channelReducer = channelSlice.reducer;
-export const {} = channelSlice.actions;
+export const channelReducer = tvShowSlice.reducer;
+export const selectAutocomplete = (state: RootState) => state.channel.showDisplay;
+export const SearchShows = (state: RootState) => state.channel.shows;

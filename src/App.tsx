@@ -1,14 +1,17 @@
 import Header from "./container/Header/Header";
 import "./App.css";
-import { useAppSelector } from "./app/hooks";
-import { fetchAllChannels } from "./store/thunks/thunk";
+import SearchForm from "./components/SearchForm/SearchForm";
 
 const App = () => {
-  const fetchLoading = useAppSelector(fetchAllChannels);
+
+
+  
   return (
     <>
       <Header />
-      <div></div>
+      <div className="container-sm mt-5">
+        <SearchForm />
+      </div>
     </>
   );
 };

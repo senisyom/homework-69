@@ -1,22 +1,26 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { RootState } from "../../app/store";
 import { IChannel, IChannelApi } from "../../types";
-import axiosApi from "../../axiosApi";
 
-export const fetchAllChannels = createAsyncThunk<IChannel[], void>(
-  "channel/fetchAllChannels",
-  async () => {
-    const response: { data: IChannelApi | null } =
-      await axiosApi<IChannelApi | null>("channels.json");
+export const fetchLoading = createAsyncThunk<
+  IChannelApi,
+  number,
+  { state: RootState }
+>("searchTvShow/fetchTvShowDetails", async (id) => {
+  const response = await axios.get<IChannelApi>(
+    `https://api.tvmaze.com/shows/${id}`
+  );
+  return response.data;
+});
 
-    if (response.data) {
-      const channelInObj = response.data;
-      return Object.keys(channelInObj).map((channelId) => {
-        return {
-          ...channelInObj[channelId],
-          id: channelId,
-        };
-      });
-    }
-    return [];
-  }
-);
+export const fetchTvShows = createAsyncThunk<
+  IChannel[],
+  string,
+  { state: RootState }
+>("searchTvShow/fetchTvShows", async (query) => {
+  const response = await axios.get<{ show: IChannel }[]>(
+    `https://api.tvmaze.com/search/shows?q=${query}`
+  );
+  return response.data.map((result) => result.show);
+});
