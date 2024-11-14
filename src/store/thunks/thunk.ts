@@ -3,11 +3,11 @@ import axios from "axios";
 import { RootState } from "../../app/store";
 import { IChannel, IChannelApi } from "../../types";
 
-export const fetchLoading = createAsyncThunk<
+export const fetchShowDetailsLoading = createAsyncThunk<
   IChannelApi,
   number,
   { state: RootState }
->("searchTvShow/fetchTvShowDetails", async (id) => {
+>("searchTvShow/fetchShowDetails", async (id) => {
   const response = await axios.get<IChannelApi>(
     `https://api.tvmaze.com/shows/${id}`
   );

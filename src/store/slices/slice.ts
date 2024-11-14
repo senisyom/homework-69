@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchTvShows, fetchLoading } from "../thunks/thunk";
+import { fetchTvShows, fetchShowDetailsLoading } from "../thunks/thunk";
 import { IChannel, IChannelApi } from "../../types";
 import { RootState } from "../../app/store";
 
@@ -7,6 +7,7 @@ export interface SearchTvShowState {
   shows: IChannel[];
   showDisplay: IChannelApi | null;
   fetchLoading: boolean;
+  
 }
 
 const initialState: SearchTvShowState = {
@@ -31,18 +32,19 @@ export const tvShowSlice = createSlice({
       .addCase(fetchTvShows.rejected, (state) => {
         state.fetchLoading = false;
       })
-      .addCase(fetchLoading.pending, (state) => {
+      .addCase(fetchShowDetailsLoading.pending, (state) => {
         state.fetchLoading = true;
       })
-      .addCase(fetchLoading.fulfilled, (state, { payload: showDisplay }) => {
+      .addCase(fetchShowDetailsLoading.fulfilled, (state, { payload: showDisplay }) => {
         state.fetchLoading = false;
         state.showDisplay = showDisplay;
       })
-      .addCase(fetchLoading.rejected, (state) => {
+      .addCase(fetchShowDetailsLoading.rejected, (state) => {
         state.fetchLoading = false;
       });
   },
 });
+
 
 export const channelReducer = tvShowSlice.reducer;
 export const selectAutocomplete = (state: RootState) => state.channel.showDisplay;

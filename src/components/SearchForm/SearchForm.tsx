@@ -6,21 +6,19 @@ import { SearchShows } from "../../store/slices/slice";
 import { IChannel } from "../../types";
 
 const SearchForm: React.FC = () => {
-  const [query, setQuery] = useState({ name: "" });
+  const [query, setQuery] = useState<string>("");
   const dispatch = useAppDispatch();
   const shows = useAppSelector(SearchShows);
+  const isLoading = useAppSelector((state) => state.channel.fetchLoading);
 
   useEffect(() => {
-    if (query.name.length > 0) {
-      dispatch(fetchTvShows(query.name));
+    if (query.trim().length > 0) {
+      dispatch(fetchTvShows(query));
     }
   }, [query, dispatch]);
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery((prev) => ({
-      ...prev,
-      name: event.target.value,
-    }));
+    setQuery(event.target.value);
   };
 
   return (
@@ -31,26 +29,29 @@ const SearchForm: React.FC = () => {
           type="text"
           className="form-control"
           placeholder="Choose show"
-          aria-label=""
-          aria-describedby="addon-wrapping"
-          value={query.name}
+          aria-label="Search"
+          value={query}
           onChange={onChange}
         />
       </div>
-      <div className="autocomplete mt-4" style={{ position: "absolute" }}>
-        {shows.length <= 0 ? (
-          <div>Не найдено</div>
-        ) : (
-          <ul className="list-unstyled">
-            {shows.map((show: IChannel) => (
-              <li key={show.id} className="show-item">
-                <NavLink to={`/shows/${show.id}`}>{show.name}</NavLink>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-      <></>
+
+      {query.length > 0 && !isLoading && (
+        <div className="autocomplete mt-4" style={{ position: "absolute" }}>
+          {shows.length === 0 ? (
+            <div>Не найдено</div>
+          ) : (
+            <ul className="list-unstyled">
+              {shows.map((show: IChannel) => (
+                <li key={show.id} className="show-item">
+                  <NavLink to={`/shows/${show.id}`}>{show.name}</NavLink>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
+      {isLoading && <div>Загрузка...</div>}
     </div>
   );
 };
